@@ -27,4 +27,3 @@ coverage
 benchmarks/graphs
 
 .idea/
-node_modules/
