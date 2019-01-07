@@ -12,6 +12,15 @@ type Query {
   contacts(name: String): [Contact]
 }
 
+type Mutation {
+  updateContact(
+    id: Int!,
+    name: String!,
+    phone: String!,
+    email: String!
+): Contact
+}
+
 type Contact {
   id: Int
   name: String
@@ -37,11 +46,25 @@ const methods = {
       contact => contact.name.includes(name),
     );
   },
+  updateContact: ({
+    id, name, phone, email,
+  }) => {
+    contacts.forEach((contact) => {
+      if (contact.id === id) {
+        contact.name = name || contact.name;
+        contact.phone = phone || contact.phone;
+        contact.email = email || contact.email;
+      }
+    });
+
+    return contacts.filter(contact => contact.id === id)[0];
+  },
 };
 
 const root = {
   contact: methods.getContact,
   contacts: methods.getContacts,
+  updateContact: methods.updateContact,
 };
 
 app.use('/graphql', graphqlHTTP({
