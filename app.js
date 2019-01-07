@@ -1,12 +1,23 @@
 import express from 'express';
-
-import apiController from './controllers/api';
+import graphqlHTTP from 'express-graphql';
+import { buildSchema } from 'graphql';
 
 const app = express();
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+const schema = buildSchema(`
+type Query {
+  message: String
+}
+`);
 
-app.use('/api', apiController);
+const root = {
+  message: () => 'First message',
+};
 
-app.listen(3000);
+app.use('/graphql', graphqlHTTP({
+  schema,
+  rootValue: root,
+  graphiql: true,
+}));
+
+app.listen(3000, () => console.log('Running server on port 3000'));
